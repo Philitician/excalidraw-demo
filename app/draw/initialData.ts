@@ -5,21 +5,27 @@ import {
   FileId,
 } from "@excalidraw/excalidraw/types/element/types";
 
-export const getInitialFile = (url: string) => {
+export const getInitialFile = () => {
   const id = genId() as FileId;
-  const dataURL = url as DataURL;
+  const dataURL = localStorage.getItem("blueprintDataURL") as DataURL;
+  const mimeType =
+    (localStorage.getItem("blueprintMimeType") as BinaryFileData["mimeType"]) ??
+    "image/png";
   return {
     id,
     dataURL,
-    mimeType: "image/png",
+    mimeType,
     created: Date.now(),
     lastRetrieved: Date.now(),
   } satisfies BinaryFileData;
 };
 
-export const createInitialImage = async (url: string) => {
+export const createInitialImage = async () => {
+  const dataURL = localStorage.getItem("blueprintDataURL");
+  if (!dataURL) return null;
+
   const image = new Image();
-  image.src = url;
+  image.src = dataURL;
   await image.decode(); // Ensure the image is loaded
   return image;
 };
